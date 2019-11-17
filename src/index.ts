@@ -56,5 +56,5 @@ export default (controllerDsls: DSLController[], tmpRelativePath: string) => {
   const routes = extractRoutes(controllerDsls);
   const output = convertToKoa(controllerDsls, routes);
   saveKoa(output, tmpRelativePath);
-  console.log('nxapi-dal-koa success!');
+  console.log('nxapi-dsl-koa success!');
 };
