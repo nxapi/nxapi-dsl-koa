@@ -7,8 +7,8 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "启动-decrator",
-      "program": "${workspaceFolder}/dist/decorator/src/__test__/index.js"
+      "name": "启动",
+      "program": "${workspaceFolder}/dist/__test__/index.js"
     },
   ]
 }

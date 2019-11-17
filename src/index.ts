@@ -2,7 +2,7 @@
 import path from 'path';
 import fs from 'fs';
 import IRoute, { extractRoutes } from './route';
-import { DSLController } from '@nxapi/nxapi';
+import { DSLController, hashCode } from '@nxapi/nxapi';
 
 const getReqData = (httpMethod: string) => {
   if (httpMethod === 'get') {
@@ -25,12 +25,19 @@ const convertToKoa = (controllerDsls: DSLController[], routes: IRoute[]) => {
     const insClassName = firstLowerCase(ctrl.className);
     newClasss += `const ${insClassName} = new ${ctrl.className}();\n`;
   });
+  imports += `const joiConf = require('./joi');\n`;
   let interfaces = '';
   routes.forEach(route => {
     const insClassName = firstLowerCase(route.className);
+    const code = hashCode(route.httpMethod + route.path);
     interfaces += `
   router.${route.httpMethod}('${route.path}', async (ctx, next) => {
-    ctx.body = ${insClassName}.${route.classMethodName}(${getReqData(route.httpMethod)});
+    const inputData = ${getReqData(route.httpMethod)}
+    const joi = joiConf['${code}'];
+    await validate(joi.request, inputData)
+    const outputData = await ${insClassName}.${route.classMethodName}(inputData);
+    await validate(joi.response, outputData);
+    ctx.body = outputData;
     await next();
   });
   `;
@@ -40,7 +47,11 @@ module.exports = (router) => {
 ${interfaces}
 }
 `;
-  const output = imports + newClasss + interfaces;
+  const validateFun = `
+const validate = (schame, data)=>{
+  return schame.validate(data);
+}`;
+  const output = imports + newClasss + validateFun + interfaces;
   return output;
 };
 

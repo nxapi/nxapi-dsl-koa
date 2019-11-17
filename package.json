@@ -1,6 +1,6 @@
 {
   "name": "@nxapi/nxapi-dsl-koa",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "@nxapi/nxapi-dsl-koa",
   "scripts": {
     "build": "npm run build-ts && npm run tslint",
@@ -20,11 +20,11 @@
   ],
   "dependencies": {},
   "devDependencies": {
+    "@nxapi/nxapi": "^0.0.9",
+    "@types/node": "^9.4.6",
     "pre-commit": "^1.2.2",
     "tslint": "^5.20.0",
     "tslint-config-airbnb": "^5.11.2",
-    "typescript": "^3.4.5",
-    "@types/node": "^9.4.6",
-    "@nxapi/nxapi": "^0.0.7"
+    "typescript": "^3.4.5"
   }
 }
