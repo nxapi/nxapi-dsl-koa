@@ -1,0 +1,30 @@
+{
+  "name": "@nxapi/nxapi-dsl-koa",
+  "version": "0.0.2",
+  "description": "@nxapi/nxapi-dsl-koa",
+  "scripts": {
+    "build": "npm run build-ts && npm run tslint",
+    "watch-ts": "rm -rf ./dist && tsc -w",
+    "build-ts": "rm -rf ./dist && tsc -p tsconfig.build.json",
+    "tslint": "tslint -c tslint.json -p tsconfig.json",
+    "tslint:fix": "tslint --fix -c tslint.json -p tsconfig.json"
+  },
+  "author": "pengxiang",
+  "license": "ISC",
+  "main": "./dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "pre-commit": [
+    "tslint"
+  ],
+  "dependencies": {},
+  "devDependencies": {
+    "pre-commit": "^1.2.2",
+    "tslint": "^5.20.0",
+    "tslint-config-airbnb": "^5.11.2",
+    "typescript": "^3.4.5",
+    "@types/node": "^9.4.6",
+    "@nxapi/nxapi": "^0.0.7"
+  }
+}
