@@ -1,4 +1,3 @@
-
 import path from 'path';
 import fs from 'fs';
 import IRoute, { extractRoutes } from './route';
@@ -17,13 +16,13 @@ const firstLowerCase = (name: string) => {
 };
 
 const convertToKoa = (controllerDsls: DSLController[], routes: IRoute[]) => {
-  let imports = '';
-  let newClasss = '';
+  let imports = `import Service from './service';\n`;
+  // let newClasss = '';
   controllerDsls.forEach(ctrl => {
     const relativePath = ctrl.fileFullPath.replace(path.join(process.cwd(), 'src'), '').replace('.ts', '');
     imports += `import ${ctrl.className} from '..${relativePath}';\n`;
     const insClassName = firstLowerCase(ctrl.className);
-    newClasss += `const ${insClassName} = new ${ctrl.className}();\n`;
+    // newClasss += `const ${insClassName} = new ${ctrl.className}();\n`;
   });
   imports += `const joiConf = require('./joi');\n`;
   let interfaces = '';
@@ -35,6 +34,11 @@ const convertToKoa = (controllerDsls: DSLController[], routes: IRoute[]) => {
     const inputData = ${getReqData(route.httpMethod)}
     const joi = joiConf['${code}'];
     await validate(joi.request, inputData)
+    const ${insClassName} = new ${route.className}();
+    const service = new Service();
+    service.setFields({ ctx: ctx });
+    testController.ctx = ctx;
+    testController.service = service;
     const outputData = await ${insClassName}.${route.classMethodName}(inputData);
     await validate(joi.response, outputData);
     ctx.body = outputData;
@@ -51,7 +55,7 @@ ${interfaces}
 const validate = (schame, data)=>{
   return schame.validate(data);
 }`;
-  const output = imports + newClasss + validateFun + interfaces;
+  const output = imports + validateFun + interfaces;
   return output;
 };
 
