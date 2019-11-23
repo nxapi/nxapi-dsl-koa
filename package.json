@@ -1,6 +1,6 @@
 {
   "name": "@nxapi/nxapi-dsl-koa",
-  "version": "0.0.4",
+  "version": "0.0.7",
   "description": "@nxapi/nxapi-dsl-koa",
   "scripts": {
     "build": "npm run build-ts && npm run tslint",
