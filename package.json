@@ -20,7 +20,7 @@
   ],
   "dependencies": {},
   "devDependencies": {
-    "@nxapi/nxapi": "^0.0.9",
+    "@nxapi/nxapi": "0.0.15",
     "@types/node": "^9.4.6",
     "pre-commit": "^1.2.2",
     "tslint": "^5.20.0",

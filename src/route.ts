@@ -15,7 +15,11 @@ export const extractRoutes = (controllerDsls: DSLController[]) => {
       httpMethods.forEach(hm => {
         if (!method[hm]) return;
         const route: IRoute = {};
-        route.path = path.join('/', ctrl.path, method[hm]);
+        route.path = path.join(
+          '/',
+          ctrl.path.substring(1, ctrl.path.length - 1),
+          method[hm].substring(1, method[hm].length - 1)
+        );
         route.httpMethod = hm;
         route.className = ctrl.className;
         route.classMethodName = method.classMethodName;
