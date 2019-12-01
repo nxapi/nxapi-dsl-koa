@@ -1,6 +1,6 @@
 {
   "name": "@nxapi/nxapi-dsl-koa",
-  "version": "0.0.7",
+  "version": "0.1.0",
   "description": "@nxapi/nxapi-dsl-koa",
   "scripts": {
     "build": "npm run build-ts && npm run tslint",
@@ -20,7 +20,8 @@
   ],
   "dependencies": {},
   "devDependencies": {
-    "@nxapi/nxapi": "0.0.15",
+    "@nxapi/nxapi": "^0.1.1",
+    "@types/jscodeshift": "^0.6.3",
     "@types/node": "^9.4.6",
     "pre-commit": "^1.2.2",
     "tslint": "^5.20.0",

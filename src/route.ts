@@ -6,6 +6,7 @@ export default interface IRoute {
   httpMethod?: string;
   className?: string;
   classMethodName?: string;
+  inputFieldNames?: string[];
 }
 
 export const extractRoutes = (controllerDsls: DSLController[]) => {
@@ -20,6 +21,12 @@ export const extractRoutes = (controllerDsls: DSLController[]) => {
           ctrl.path.substring(1, ctrl.path.length - 1),
           method[hm].substring(1, method[hm].length - 1)
         );
+        if (method.req.type === 'params') {
+          route.inputFieldNames = [];
+          method.req.fields.forEach(field => {
+            route.inputFieldNames.push(field.name);
+          });
+        }
         route.httpMethod = hm;
         route.className = ctrl.className;
         route.classMethodName = method.classMethodName;

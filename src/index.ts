@@ -4,15 +4,25 @@ import IRoute, { extractRoutes } from './route';
 import { DSLController, hashCode } from '@nxapi/nxapi';
 
 const getReqData = (httpMethod: string) => {
-  if (httpMethod === 'get') {
+  if (httpMethod === 'get' || httpMethod === 'delete') {
     return 'ctx.request.query';
-  } else if (httpMethod === 'post' || httpMethod === 'put' || httpMethod === 'delete') {
-    return 'ctx.request.body';
+  } else if (httpMethod === 'post' || httpMethod === 'put') {
+    return 'ctx.request.fields';
   }
 };
 
 const firstLowerCase = (name: string) => {
   return name.replace(name[0], name[0].toLowerCase());
+};
+
+const extendInputData = (inputData: string, fields: string[]) => {
+  if (!fields) return inputData;
+  let extend = '';
+  fields.forEach(field => {
+    extend += `inputData['${field}'], `;
+  });
+
+  return extend.substr(0, extend.length - 2);
 };
 
 const convertToKoa = (controllerDsls: DSLController[], routes: IRoute[]) => {
@@ -36,7 +46,7 @@ const convertToKoa = (controllerDsls: DSLController[], routes: IRoute[]) => {
     service.setFields({ ctx: ctx });
     testController.ctx = ctx;
     testController.service = service;
-    const outputData = await ${insClassName}.${route.classMethodName}(inputData);
+    const outputData = await ${insClassName}.${route.classMethodName}(${extendInputData('inputData', route.inputFieldNames)});
     await validate(joi.response, outputData, 'response');
     ctx.body = outputData;
     await next();
@@ -49,7 +59,7 @@ ${interfaces}
 }
 `;
   const validateFun = `
-const validate = async (schame, data, source)=>{
+const validate = async (schame, data, source) => {
   let validateResult = null;
   try {
     validateResult = await schame.validate(data);
