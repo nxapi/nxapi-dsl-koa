@@ -7,7 +7,7 @@ const getReqData = (httpMethod: string) => {
   if (httpMethod === 'get' || httpMethod === 'delete') {
     return 'ctx.request.query';
   } else if (httpMethod === 'post' || httpMethod === 'put') {
-    return 'ctx.request.fields';
+    return '{ ...ctx.request.body, ...ctx.request.files }';
   }
 };
 
@@ -24,6 +24,16 @@ const extendInputData = (inputData: string, fields: string[]) => {
 
   return extend.substr(0, extend.length - 2);
 };
+const validateFun = `
+const validate = async (schame, data, source) => {
+  let validateResult = null;
+  try {
+    validateResult = await schame.validate(data);
+  } catch (e) {
+    throw new Error(e.details[0].message + ', [in '+ source+']');
+  }
+  return validateResult;
+}`;
 
 const convertToKoa = (controllerDsls: DSLController[], routes: IRoute[]) => {
   let imports = `import Service from './service';\n`;
@@ -46,7 +56,10 @@ const convertToKoa = (controllerDsls: DSLController[], routes: IRoute[]) => {
     service.setFields({ ctx: ctx });
     testController.ctx = ctx;
     testController.service = service;
-    const outputData = await ${insClassName}.${route.classMethodName}(${extendInputData('inputData', route.inputFieldNames)});
+    const outputData = await ${insClassName}.${route.classMethodName}(${extendInputData(
+      'inputData',
+      route.inputFieldNames
+    )});
     await validate(joi.response, outputData, 'response');
     ctx.body = outputData;
     await next();
@@ -58,17 +71,6 @@ module.exports = (router) => {
 ${interfaces}
 }
 `;
-  const validateFun = `
-const validate = async (schame, data, source) => {
-  let validateResult = null;
-  try {
-    validateResult = await schame.validate(data);
-  } catch (e) {
-    throw new Error(e.details[0].message + ', [in '+ source+']');
-  }
-  return validateResult;
-}`;
-
   const output = imports + validateFun + interfaces;
   return output;
 };
